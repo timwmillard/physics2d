@@ -36,6 +36,15 @@ release: main.o
 	cp $(TARGET) release/$(TARGET).app/Contents/MacOS/
 
 
+#emcc -o game.html game.c -Os -Wall ./path-to/libraylib.a -I. -Ipath-to-raylib-h -L. -Lpath-to-libraylib-a -s USE_GLFW=3 --shell-file path-to/shell.html -DPLATFORM_WEB
+web:
+	emcc -o game.html src/main.c -Os -Wall \
+		./lib/raylib-5.0/src/libraylib.a \
+		-Ilib/raylib-5.0/src \
+		-Llib/raylib-5.0/src \
+		-s USE_GLFW=3 \
+		-DPLATFORM_WEB
+
 # all: $(TARGET)
 
 # $(TARGET): %.o
