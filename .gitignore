@@ -1,0 +1,8 @@
+
+.DS_Store
+
+/dodgeball
+*.o
+
+/release/dodgeball.app/Contents/MacOS/app
+
