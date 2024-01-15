@@ -5,7 +5,9 @@
 #include <emscripten/emscripten.h>
 #endif
 
-void UpdateDrawFrame(void);     // Update and Draw one frame
+void ProcessEvents(void);
+void Update(float);     // Update and Draw one frame
+void Draw(void);
 
 int main(void)
 {
@@ -22,22 +24,21 @@ int main(void)
 
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        UpdateDrawFrame();
+        ProcessEvents();
+
+        float dt = GetFrameTime();
+        Update(dt);
+
+        BeginDrawing();
+            DrawFPS(10, 10);
+            Draw();
+        EndDrawing();
+
     }
 #endif
 
     CloseWindow();
 
     return 0;
-}
-
-void UpdateDrawFrame(void)
-{
-    BeginDrawing();
-        ClearBackground(RAYWHITE);
-
-        DrawText("Build your cool app", 190, 200, 20, LIGHTGRAY);
-
-    EndDrawing();
 }
 
