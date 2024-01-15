@@ -3,6 +3,8 @@
 
 /dodgeball
 *.o
+*.wasm
+*.a
 
 /release/dodgeball.app/Contents/MacOS/app
 

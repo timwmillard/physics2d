@@ -2,6 +2,7 @@
 #define PHYSICS2D_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 static inline double map(const double value, const double start1, const double stop1, const double start2, const double stop2)
@@ -125,20 +126,56 @@ typedef struct Body {
 #endif // End PHYSICS2D_H
 
 
+extern Body *body_alloc();
+extern void body_init(Body *body, Vec2 pos, double mass);
+extern Body *body_new(Vec2 pos, float mass);
+extern void body_apply_force(Body *body, const Vec2 force);
+extern void body_apply_gravity(Body *body, const Vec2 gravity);
+extern void body_update(Body *body, const double dt);
+
+
 #ifdef PHYSICS2D_IMPLEMENTATION
 
-static void body_apply_force(Body *body, const Vec2 force) {
+extern Body *body_alloc()
+{
+    return (Body *) malloc(sizeof(Body));
+}
+
+void body_init(Body *body, Vec2 pos, double mass)
+{
+    body->pos = pos;
+    body->vel = vec2zero;
+    body->acc = vec2zero;
+    body->mass = mass;
+}
+
+Body *body_new(Vec2 pos, float mass)
+{
+    // Can't have zero mass body
+    if (mass==0)
+        return NULL;
+
+    Body *body = body_alloc();
+    if (!body)
+        return NULL;
+
+    body_init(body, pos, mass);
+
+    return body;
+}
+
+void body_apply_force(Body *body, const Vec2 force) {
     // Newtons law
     // ∑F = ma or a = F / m
     Vec2 acc = vec2_div(force, body->mass);
     body->acc = vec2_add(body->acc, acc);
 }
 
-static void body_apply_gravity(Body *body, const Vec2 gravity) {
+void body_apply_gravity(Body *body, const Vec2 gravity) {
     body->acc = vec2_add(body->acc, gravity);
 }
 
-static void body_update(Body *body, const double dt) {
+void body_update(Body *body, const double dt) {
     // Mutiply by delta time
     Vec2 acc = vec2_mult(body->acc, dt);
 

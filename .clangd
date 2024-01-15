@@ -1,2 +1,5 @@
 CompileFlags:
   Add: [ -I../lib/raylib-5.0/src, -DPHYSICS2D_IMPLEMENTATION ]
+
+Diagnostics:
+  Suppress: 'misc-definitions-in-headers'
