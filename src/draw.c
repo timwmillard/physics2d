@@ -1,7 +1,7 @@
-#include <stdio.h>
+// #include <stdio.h>
 #include <raylib.h>
 
-#define PHYSICS2D_IMPLEMENTATION
+//#define PHYSICS2D_IMPLEMENTATION
 #include "physics2d.h"
 
 
