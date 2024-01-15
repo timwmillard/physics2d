@@ -5,6 +5,7 @@
 #include <emscripten/emscripten.h>
 #endif
 
+void Init(void);
 void ProcessEvents(void);
 void Update(float);     // Update and Draw one frame
 void Draw(void);
@@ -21,6 +22,8 @@ int main(void)
     emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
     SetTargetFPS(60);
+
+    Init();
 
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {

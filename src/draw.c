@@ -1,5 +1,6 @@
 // #include <stdio.h>
 #include <raylib.h>
+#include <time.h>
 
 //#define PHYSICS2D_IMPLEMENTATION
 #include "physics2d.h"
@@ -31,8 +32,18 @@ Ball player1 = {
 };
 
 Vec2 gravity = {0, 6};
+Vec2 mouse =  {0, 0};
+
 
 bool start = false;
+
+void Init()
+{
+    srand(time(NULL));
+
+    Vec2 r = vec2_random();
+    print_vec2(r);
+}
 
 void ProcessEvents()
 {
@@ -47,13 +58,14 @@ void ProcessEvents()
 
     int mouse_x = GetMouseX();
     int mouse_y = GetMouseY();
+    mouse = vec2(mouse_x, mouse_y);
 
-    if (IsMouseButtonDown(0)) {
-        Vec2 wind = vec2(mouse_x, mouse_y);
-        wind = vec2_set_mag(wind, -200);
-        body_apply_force(&player.body, wind);
-        body_apply_force(&player1.body, wind);
-    }
+    /* if (IsMouseButtonDown(0)) { */
+    /*     Vec2 wind = vec2(mouse_x, mouse_y); */
+    /*     wind = vec2_set_mag(wind, -200); */
+    /*     body_apply_force(&player.body, wind); */
+    /*     body_apply_force(&player1.body, wind); */
+    /* } */
 }
 
 void body_bounce(Body *body, Rect bounds)
@@ -77,10 +89,19 @@ void Update(float dt)
         body_bounce(&player.body, rect(0, 0, screenWidth, screenHeight));
         body_bounce(&player1.body, rect(0, 0, screenWidth, screenHeight));
 
-        body_apply_gravity(&player.body, gravity);
-        body_update(&player.body, dt);
+        /* Vec2 acc = vec2(3, 0); */
+        /* Vec2 acc = vec2_random(); */
+        /* acc = vec2_mult(acc, 1000); */
+        /* Vec2 acc = vec2_mult(mouse, 0.1); */
+        Vec2 acc = vec2_sub(mouse, player.body.pos);
+        double fac = vec2_mag(acc);
+         acc = vec2_set_mag(acc, fac);
+        
+        body_apply_force(&player.body, acc);
 
-        body_apply_gravity(&player1.body, gravity);
+        /* body_apply_gravity(&player.body, gravity); */
+        body_update(&player.body, dt);
+        /* body_apply_gravity(&player1.body, gravity); */
         body_update(&player1.body, dt);
 
     }

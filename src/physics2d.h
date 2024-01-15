@@ -219,6 +219,7 @@ extern Body *body_new(Vec2 pos, float mass);
 extern void body_apply_force(Body *body, const Vec2 force);
 extern void body_apply_gravity(Body *body, const Vec2 gravity);
 extern void body_update(Body *body, const double dt);
+extern Vec2 body_momentum(Body *body);
 
 #endif // End PHYSICS2D_H
 
@@ -279,10 +280,19 @@ void body_update(Body *body, const double dt)
     body->acc = vec2zero;
 }
 
+Vec2 body_momentum(Body *body)
+{
+    return vec2_mult(body->vel, body->mass);
+}
 
 
-#define STB_PERLIN_IMPLEMENTATION
-#include "stb_perlin.h"
+/**
+ * Perlin Noise
+ *
+ */
+/* #define STB_PERLIN_IMPLEMENTATION */
+/* #include "stb_perlin.h" */
+
 void noise_seed(int seed)
 {
     /* stb_perlin_noise3_seed(x, y, z, 0, 0, 0, seed); */
@@ -291,7 +301,8 @@ double noise(double x);
 double noise2(double x, double y);
 double noise3(double x, double y, double z)
 {
-    return stb_perlin_noise3(x, y, z, 0, 0, 0);
+    /* return stb_perlin_noise3(x, y, z, 0, 0, 0); */
+    return 0;
 }
 
 void destroy_noise();
