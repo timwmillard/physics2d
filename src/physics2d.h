@@ -26,6 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 
 static inline double map(const double value,
         const double start1, const double stop1,
@@ -207,10 +208,19 @@ static inline Rect rect(const double x, const double y, const double width, cons
  *
  */
 typedef struct Body {
+    // Position
     Vec2 pos;
+
+    // Velocity
     Vec2 vel;
+
+    // Acceleration
     Vec2 acc;
+
+    // Mass
     double mass;
+
+    double max_speed;
 } Body;
 
 extern Body *body_alloc();
@@ -239,6 +249,7 @@ void body_init(Body *body, Vec2 pos, double mass)
     body->vel = vec2zero;
     body->acc = vec2zero;
     body->mass = mass;
+    body->max_speed = -1;
 }
 
 Body *body_new(Vec2 pos, float mass)
@@ -275,14 +286,28 @@ void body_update(Body *body, const double dt)
     Vec2 acc = vec2_mult(body->acc, dt);
 
     body->vel = vec2_add(body->vel, acc);
-    body->pos = vec2_add(body->pos, body->vel);
+    if (body->max_speed >= 0) {
+        body->vel = vec2_limit(body->vel, body->max_speed);
+    }
 
+    body->pos = vec2_add(body->pos, body->vel);
     body->acc = vec2zero;
 }
 
 Vec2 body_momentum(Body *body)
 {
     return vec2_mult(body->vel, body->mass);
+}
+
+// friction returns a force. 
+// f = -1 * u * N v
+// 
+// n normal force magnature
+// coff coffiefient of friction
+Vec2 friction(Vec2 vel, double coff, double n)
+{
+    vel = vec2_normalize(vel);
+    return vec2_mult(vel, -coff*n);
 }
 
 
