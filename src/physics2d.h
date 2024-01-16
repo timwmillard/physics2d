@@ -24,9 +24,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define PHYSICS2D_H
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <math.h>
 #include <float.h>
+
+#include "stb_ds.h"
 
 static inline double map(const double value,
         const double start1, const double stop1,
@@ -94,9 +97,16 @@ static inline double vec2_dot(const Vec2 a, const Vec2 b)
     return a.x * b.x + a.y * b.y;
 }
 
+// Returns the magnitude (length) of the vector.
 static inline double vec2_mag(const Vec2 v)
 {
     return sqrtf(v.x * v.x + v.y * v.y);
+}
+
+// Returns the magnitude (length) of the vector squared.
+static inline double vec2_mag_sq(const Vec2 v)
+{
+    return v.x * v.x + v.y * v.y;
 }
 
 static inline Vec2 vec2_mult(const Vec2 v, const double m)
@@ -115,6 +125,8 @@ static inline Vec2 vec2_normalize(const Vec2 v)
     return mag == 0 ? vec2zero : vec2(v.x/mag, v.y/mag);
 }
 
+// Set the magnitude (length) of the vector.
+// Returns a new Vec2.
 static inline Vec2 vec2_set_mag(const Vec2 v, double m)
 {
     return vec2_mult(vec2_normalize(v), m);
@@ -123,6 +135,11 @@ static inline Vec2 vec2_set_mag(const Vec2 v, double m)
 static inline Vec2 vec2_neg(const Vec2 v)
 {
     return vec2(-v.x, -v.y);
+}
+
+static inline bool vec2_equal(const Vec2 v1, const Vec2 v2)
+{
+    return v1.x == v2.x && v1.y == v2.y;
 }
 
 /* First seed:
@@ -146,8 +163,6 @@ static inline Vec2 vec2_limit(const Vec2 v, double max)
 
 /**
  * Vec2 TODO Funcs
-// Returns the magnitude (length) of the vector squared.
-static inline double vec2_mag_sq(const Vec2 v);
 
 
 // Limits a vector's magnitude to a maximum value. 
@@ -181,26 +196,6 @@ static inline void print_vec2(Vec2 v)
 
 
 
-/**
- * Rectangle
- * 
- */
-typedef struct Rect {
-    Vec2 pos;
-    double width;
-    double height;
-} Rect;
-
-
-static inline Rect rect(const double x, const double y, const double width, const double height)
-{
-     Rect r = {
-        .pos = vec2(x, y),
-        .width = width,
-        .height = height
-     };
-    return r;
-}
 
 /**
  * Body is a physics body that lives in an enviroment.
@@ -221,6 +216,8 @@ typedef struct Body {
     double mass;
 
     double max_speed;
+
+    Vec2 *shapes;
 } Body;
 
 extern Body *body_alloc();
@@ -238,6 +235,10 @@ extern Vec2 body_momentum(Body *body);
 #define PHYSICS2D_IMPLEMENTATION
 #ifdef PHYSICS2D_IMPLEMENTATION
 
+
+#define STB_DS_IMPLEMENTATION
+#include "stb_ds.h"
+
 extern Body *body_alloc()
 {
     return (Body *) malloc(sizeof(Body));
@@ -250,6 +251,8 @@ void body_init(Body *body, Vec2 pos, double mass)
     body->acc = vec2zero;
     body->mass = mass;
     body->max_speed = -1;
+
+    arrput(body->shapes, vec2(1,1));
 }
 
 Body *body_new(Vec2 pos, float mass)
@@ -332,4 +335,163 @@ double noise3(double x, double y, double z)
 
 void destroy_noise();
 
+/**********************************************
+ *
+ * Shapes
+ *
+ */
+
+
+
+/**
+ * Point
+ * 
+ */
+typedef struct Point {
+    Vec2 pos;
+} Point;
+
+/**
+ * Line
+ * 
+ */
+typedef struct Line {
+    Vec2 v1;
+    Vec2 v2;
+} Line;
+
+
+/**
+ * Circle
+ * 
+ */
+typedef struct Circle {
+    Vec2 center;
+    double radius;
+} Circle;
+
+/**
+ * Ellipse
+ * 
+ */
+typedef struct Ellipse {
+    Vec2 center;
+    double radius_x;
+    double radius_y;
+} Ellipse;
+
+/**
+ * Triangle
+ * 
+ */
+typedef struct Triangle {
+    Vec2 v1;
+    Vec2 v2;
+    Vec2 v3;
+} Triangle;
+
+/**
+ * Poly
+ * 
+ */
+typedef struct Poly {
+    Vec2 *v;
+} Poly;
+
+/**
+ * Rectangle
+ * 
+ */
+typedef struct Rect {
+    Vec2 pos;
+    double width;
+    double height;
+} Rect;
+
+
+
+double point_area(Point p) { return 1; }
+bool point_collide(Point p1, Point p2) { return vec2_equal(p1.pos, p2.pos); }
+bool point_collide_line(Point p, Line l);
+bool point_collide_circle(Point p, Circle c);
+bool point_collide_ellipse(Point p, Ellipse e);
+bool point_collide_triangle(Point p, Triangle t);
+bool point_collide_rect(Point p, Rect r);
+bool point_collide_poly(Point p, Poly poly);
+
+double line_area(Line l) { return 0; }
+bool line_collide(Line l1, Line l2);
+bool line_collide_circle(Line l, Circle c);
+bool line_collide_ellipse(Line l, Ellipse e);
+bool line_collide_triangle(Line l, Triangle t);
+bool line_collide_rect(Line l, Rect r);
+bool line_collide_poly(Line l, Poly poly);
+
+double circle_area(Circle p) {
+    return M_PI * p.radius  * p.radius;
+}
+
+bool circle_collide(Circle c1, Circle c2);
+bool circle_collide_line(Circle c, Line l);
+bool circle_collide_point(Circle c, Point p);
+bool circle_collide_ellipse(Circle p, Ellipse e);
+bool circle_collide_triangle(Circle p, Triangle t);
+bool circle_collide_rect(Circle p, Rect r);
+bool circle_collide_poly(Circle p, Poly poly);
+
+typedef enum ShapeType {
+    POINT,
+    LINE,
+    CIRCLE,
+    ELLIPSE,
+    RECT,
+    TRIANGLE,
+    POLY,
+} ShapeType;
+
+typedef struct Shape {
+    ShapeType type;
+    union {
+        Point point;
+        Line line;
+        Circle circle;
+        Ellipse ellipse;
+        Rect rect;
+        Triangle triangle;
+        Poly poly;
+    };
+} Shape;
+
+bool shape_collide(Shape s1, Shape s2);
+
+double shape_area(Shape s) {
+    switch (s.type) {
+        case POINT: return point_area(s.point); break;
+        case LINE: return line_area(s.line); break;
+        case CIRCLE: return circle_area(s.circle); break;
+        case ELLIPSE: return point_area(s.point); break;
+        case TRIANGLE: return point_area(s.point); break;
+        case RECT: return point_area(s.point); break;
+        case POLY: return point_area(s.point); break;
+    }
+    return false;
+}
+
+Vec2 shape_center(Shape s1, Shape s2);
+
+static inline Shape rect(const double x, const double y, const double width, const double height)
+{
+    Rect r= {
+        .pos = vec2(x, y),
+        .width = width,
+        .height = height,
+    };
+    Shape s = {
+        .type = RECT,
+        .rect = r,
+    };
+    return s;
+}
+
 #endif // End PHYSICS2D_IMPLEMENTATION
+

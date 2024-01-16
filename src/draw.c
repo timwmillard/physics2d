@@ -84,10 +84,11 @@ void Update(float dt)
 {
     const int screenWidth = 800;
     const int screenHeight = 450;
+    Rect screen = {0,0, screenWidth, screenHeight};
 
     if (start) {
-        body_bounce(&player.body, rect(0, 0, screenWidth, screenHeight));
-        body_bounce(&player1.body, rect(0, 0, screenWidth, screenHeight));
+        body_bounce(&player.body, screen);
+        body_bounce(&player1.body, screen);
 
         /* Vec2 acc = vec2(3, 0); */
         /* Vec2 acc = vec2_random(); */

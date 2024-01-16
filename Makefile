@@ -29,7 +29,7 @@ all: $(TARGET)
 $(TARGET) : main.o draw.o
 	$(LD) -o $(TARGET) $^ $(FRAMEWORKS) $(LDFLAGS)
 
-draw.o: src/draw.c
+draw.o: src/draw.c src/physics2d.h
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 main.o: src/main.c
