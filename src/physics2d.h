@@ -313,6 +313,10 @@ Vec2 friction(Vec2 vel, double coff, double n)
     return vec2_mult(vel, -coff*n);
 }
 
+Vec2 drag(Vec2 vel, double coff, double n)
+{
+    return vec2zero;
+}
 
 /**
  * Perlin Noise
