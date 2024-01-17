@@ -261,24 +261,6 @@ typedef struct Line {
     Vec2 v2;
 } Line;
 
-static inline Line line(double x1, double y1, double x2, double y2)
-{
-    Line l = {
-        .v1 = vec2(x1, y1),
-        .v2 = vec2(x2, y2),
-    };
-    return l;
-}
-
-static inline Line linev(Vec2 v1, Vec2 v2)
-{
-    Line l = {
-        .v1 = v1,
-        .v2 = v2,
-    };
-    return l;
-}
-
 
 // Circle
 typedef struct Circle {
@@ -336,25 +318,34 @@ typedef struct Shape {
 
 static inline Shape point(const double x, const double y)
 {
-    Point p = {x, y};
-    Shape s = {
+    return (Shape){
         .type = POINT,
-        .point = p,
+        .point = {x,y},
     };
-    return s;
+}
+
+static inline Shape linev(Vec2 v1, Vec2 v2)
+{
+    return (Shape){
+        .type = LINE,
+        .line = {v1, v2}
+    };
+}
+
+static inline Shape line(double x1, double y1, double x2, double y2)
+{
+    return linev(vec2(x1, y1), vec2(x2, y2));
 }
 
 static inline Shape circlev(Vec2 center, double radius)
 {
-    Circle c = {
-        .center = center,
-        .radius = radius,
-    };
-    Shape s = {
+    return (Shape){
         .type = CIRCLE,
-        .circle = c,
+        .circle = {
+            .center = center,
+            .radius = radius,
+        },
     };
-    return s;
 }
 
 static inline Shape circle(double x, double y, double radius)
@@ -364,16 +355,14 @@ static inline Shape circle(double x, double y, double radius)
 
 static inline Shape rectv(const Vec2 pos, const double width, const double height)
 {
-    Rect r= {
-        .pos = pos,
-        .width = width,
-        .height = height,
-    };
-    Shape s = {
+    return (Shape){
         .type = RECT,
-        .rect = r,
+        .rect = {
+            .pos = pos,
+            .width = width,
+            .height = height,
+        },
     };
-    return s;
 }
 
 static inline Shape rect(const double x, const double y, const double width, const double height)
@@ -383,16 +372,10 @@ static inline Shape rect(const double x, const double y, const double width, con
 
 static inline Shape trianglev(Vec2 v1, Vec2 v2, Vec2 v3)
 {
-    Triangle t = {
-        .v1 = v1,
-        .v2 = v2,
-        .v3 = v3,
-    };
-    Shape s = {
+    return (Shape){
         .type = TRIANGLE,
-        .triangle = t,
+        .triangle = {v1, v2, v3},
     };
-    return s;
 }
 
 static inline Shape triangle(double x1, double y1, double x2, double y2, double x3, double y3)
@@ -412,15 +395,13 @@ static inline Shape poly(int n, Vec2 v1, ...)
     }
     va_end(args);
 
-    Poly p = {
-        .n = n,
-        .v = v,
-    };
-    Shape s = {
+    return (Shape){
         .type = POLY,
-        .poly = p,
+        .poly = {
+            .n = n,
+            .v = v,
+        },
     };
-    return s;
 }
 
 static inline void poly_free(Poly p)
@@ -468,8 +449,6 @@ void body_init(Body *body, Vec2 pos, double mass)
     body->acc = vec2zero;
     body->mass = mass;
     body->max_speed = -1;
-
-    arrput(body->shapes, vec2(1,1));
 }
 
 Body *body_new(Vec2 pos, float mass)
