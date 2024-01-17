@@ -605,6 +605,7 @@ bool point_collide(Point p1, Point p2)
     int p2y = p2.y;
     return p1x == p2x && p1y == p2y;
 }
+
 bool point_collide_line(Point p, Line l) { return false; }
 bool point_collide_circle(Point p, Circle c) { return false; }
 bool point_collide_triangle(Point p, Triangle t) { return false; }
@@ -692,6 +693,35 @@ Vec2 shape_center(Shape s1, Shape s2);
 static inline double kinamatic(double acc, double vel, double pos, double t)
 {
     return 0.5f * acc * t * t * vel * t + pos;
+}
+
+
+Shape *collider()
+{
+    return NULL;
+}
+
+void collider_free(Shape *collier)
+{
+    arrfree(collier);
+}
+
+void collider_add_shape(Shape *collider, Shape shape)
+{
+    arrput(collider, shape);
+}
+
+bool collider_detect_collisions(Shape *c1, Shape *c2)
+{
+    int n1 = arrlen(c1);
+    int n2 = arrlen(c2);
+    for (int i=0; i<n1; i++) {
+        for (int j=0; j<n2; j++) {
+            if (shape_collide(c1[i], c2[j]))
+                return true;
+        }
+    }
+    return false;
 }
 
 #endif // End PHYSICS2D_IMPLEMENTATION
