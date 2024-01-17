@@ -2,6 +2,7 @@
 .DS_Store
 
 /dodgeball
+/src/physics2d_test
 *.o
 *.wasm
 *.a

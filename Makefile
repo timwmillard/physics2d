@@ -76,3 +76,7 @@ run:
 clean:
 	rm -f *.o $(TARGET) release/$(TARGET).app/Contents/MacOS/$(TARGET)
 
+test: src/physics2d.h src/physics2d_test.c
+	clang src/physics2d_test.c -o src/physics2d_test
+	./src/physics2d_test
+
