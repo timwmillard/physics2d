@@ -20,12 +20,10 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-
 physics2d.h is a simple physics 2D library for programming games and
 simulations.
 
-This is a single-header-file library that provides easy-to-use
-
+This is a single-header-file library that provides easy-to-use.
 
 Usage:
 To use this library, copy physics2d.h into project.
