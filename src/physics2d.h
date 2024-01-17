@@ -59,6 +59,16 @@ static inline double min(const double a, const double b)
 {
     return (a < b)? a : b;
 }
+
+// equalp compares two doubles for equality with given percision.
+static inline bool equalp(double a, double b, int percision)
+{
+    int multi = pow(10, percision);
+    int value_a = (int)(a * multi + 0.5); 
+    int value_b = (int)(b * multi + 0.5); 
+    return value_a == value_b;
+}
+
 /* generate a random floating point number from min to max 
  * #include <time.h>
  * srand(time(NULL));
@@ -149,9 +159,15 @@ static inline Vec2 vec2_neg(const Vec2 v)
     return vec2(-v.x, -v.y);
 }
 
-static inline bool vec2_equal(const Vec2 v1, const Vec2 v2)
+static inline bool vec2_equal(const Vec2 a, const Vec2 b)
 {
-    return v1.x == v2.x && v1.y == v2.y;
+    return a.x == b.x && a.y == b.y;
+}
+
+static inline bool vec2_equalp(const Vec2 a, const Vec2 b, int percision)
+{
+    return equalp(a.x, b.x, percision) 
+        && equalp(a.y, b.y, percision);
 }
 
 /* First seed:
