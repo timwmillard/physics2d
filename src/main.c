@@ -15,7 +15,7 @@ int main(void)
     const int screenWidth = 800;
     const int screenHeight = 450;
 
-    InitWindow(screenWidth, screenHeight, "Dodge Ball");
+    InitWindow(screenWidth, screenHeight, "Physics 2D Simulation");
 
     // Main game loop
 #if defined(PLATFORM_WEB)

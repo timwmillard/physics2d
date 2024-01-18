@@ -2,8 +2,7 @@
 #include <raylib.h>
 #include <time.h>
 
-//#define PHYSICS2D_IMPLEMENTATION
-#include "physics2d.h"
+#include "../lib/physics2d.h"
 
 
 typedef struct Ball {
@@ -42,7 +41,7 @@ void Init()
     srand(time(NULL));
 
     Vec2 r = vec2_random();
-    print_vec2(r);
+    debug_vec2(r);
 }
 
 void ProcessEvents()

@@ -1,11 +1,11 @@
 
 .DS_Store
 
-/dodgeball
+/simulation
 /src/physics2d_test
 *.o
 *.wasm
 *.a
 
-/release/dodgeball.app/Contents/MacOS/app
+/release/simulation.app/Contents/MacOS/siumulation
 

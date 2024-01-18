@@ -191,9 +191,7 @@ static inline Vec2 vec2_limit(const Vec2 v, double max)
 
 /**
  * Vec2 TODO Funcs
-
-// Limits a vector's magnitude to a maximum value.
-static inline Vec2 vec2_limit(const Vec2 v, double m);
+ *
 
 // Calculates the angle a 2D vector makes with the positive x-axis. Angles
 // increase in the clockwise direction.p
@@ -221,7 +219,7 @@ static inline double vec2_lerp(const Vec2 a, const Vec2 b, const double amp);
 
 */
 
-static inline void print_vec2(Vec2 v)
+static inline void debug_vec2(Vec2 v)
 {
     printf("vec2: x=%lf, y=%lf\n", v.x, v.y);
 }
@@ -633,7 +631,22 @@ bool line_collide_triangle(Line l, Triangle t) { return false; }
 bool line_collide_rect(Line l, Rect r) { return false; }
 bool line_collide_poly(Line l, Poly poly) { return false; }
 
-bool circle_collide(Circle c1, Circle c2) { return false; }
+bool circle_collide(Circle c1, Circle c2)
+{ 
+  // get distance between the circle's centers
+  // use the Pythagorean Theorem to compute the distance
+  double distX = c1.center.x - c2.center.x;
+  double distY = c1.center.y - c2.center.y;
+  double distance = sqrt( (distX*distX) + (distY*distY) );
+
+  // if the distance is less than the sum of the circle's
+  // radii, the circles are touching!
+  if (distance <= c1.radius+c2.radius) {
+    return true;
+  }
+  return false;
+}
+
 bool circle_collide_line(Circle c, Line l) { return false; }
 bool circle_collide_point(Circle c, Point p) { return false; }
 bool circle_collide_triangle(Circle p, Triangle t) { return false; }

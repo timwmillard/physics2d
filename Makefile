@@ -1,6 +1,6 @@
 .PHONY: all clean run
 # change application name here (executable output name)
-TARGET=dodgeball
+TARGET=simulation
 
 # compiler
 CC=clang
@@ -26,17 +26,22 @@ FRAMEWORKS = -framework IOKit -framework Cocoa
 
 all: $(TARGET)
 
+script : main.o script.o
+	$(LD) -o $(TARGET) $^ $(FRAMEWORKS) $(LDFLAGS)
+
 $(TARGET) : main.o draw.o
 	$(LD) -o $(TARGET) $^ $(FRAMEWORKS) $(LDFLAGS)
 
-draw.o: src/draw.c src/physics2d.h
+draw.o: src/draw.c lib/physics2d.h
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+
+script.o: src/script.c lib/physics2d.h
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 main.o: src/main.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
-release: main.o draw.o
-	$(LD) -o $(TARGET) $< $(FRAMEWORKS) $(LDFLAGS)
+release: $(TARGET)
 	cp $(TARGET) release/$(TARGET).app/Contents/MacOS/
 
 
