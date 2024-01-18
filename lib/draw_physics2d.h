@@ -28,8 +28,15 @@ void object_update(Object *obj, double dt)
     body_update(&obj->body, dt);
 }
 
+void draw_shape(Vec2 start, Shape shape, Color color);
+
+// Default object_draw
 void object_draw(Object *obj)
 {
+    Color gray = { 130, 130, 130, 200 };
+    for (int i=0; i<arrlen(obj->colliers); i++) {
+        draw_shape(obj->body.pos, obj->colliers[i], gray);
+    }
 }
 
 Object basic_object = {

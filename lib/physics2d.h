@@ -584,7 +584,7 @@ double triangle_area(Triangle t)
 
 double rect_area(Rect r)
 {
-    return -1; // TODO
+    return r.width * r.height;
 }
 
 double poly_area(Poly p)
