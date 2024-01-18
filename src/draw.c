@@ -1,6 +1,5 @@
 // #include <stdio.h>
 #include <raylib.h>
-#include <time.h>
 
 #include "../lib/physics2d.h"
 
@@ -36,7 +35,7 @@ Vec2 mouse =  {0, 0};
 
 bool start = false;
 
-void Init()
+void Init(int width, int height)
 {
     Vec2 r = vec2_random();
     debug_vec2(r);

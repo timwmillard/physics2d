@@ -7,7 +7,7 @@
 #include <emscripten/emscripten.h>
 #endif
 
-void Init(void);
+void Init(int width, int height);
 void ProcessEvents(void);
 void Update(float);     // Update and Draw one frame
 void Draw(void);
@@ -28,7 +28,7 @@ int main(void)
 #else
     SetTargetFPS(60);
 
-    Init();
+    Init(screenWidth, screenHeight);
 
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {

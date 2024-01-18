@@ -44,7 +44,7 @@ typedef struct World {
 
 } World;
 
-World world(int width, int height)
+World world_new(int width, int height)
 {
     return (World){
         .width = width,
@@ -142,4 +142,17 @@ void draw_rect(Rect rect, Color color)
 
 void draw_poly(Poly poly, Color color)
 {
+}
+
+void draw_shape(Vec2 start, Shape shape, Color color)
+{
+    Shape s = shape_offset(start, shape);
+    switch (shape.type) {
+        case POINT: draw_point(s.point, color); break;
+        case LINE: draw_line(s.line, color); break;
+        case CIRCLE: draw_circle(s.circle, color); break;
+        case TRIANGLE: break;
+        case RECT: draw_rect(s.rect, color); break;
+        case POLY: break;
+    }
 }

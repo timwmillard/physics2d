@@ -714,6 +714,35 @@ bool shape_collide(Shape s1, Shape s2)
     return false;
 }
 
+Shape shape_offset(Vec2 start, Shape shape)
+{
+    Vec2 v1, v2, v3;
+    switch (shape.type) {
+        case POINT:
+            shape.point = vec2_add(start, shape.point);
+            break;
+        case LINE:
+            shape.line.v1 = vec2_add(start, shape.line.v1);
+            shape.line.v2 = vec2_add(start, shape.line.v2);
+            break;
+        case CIRCLE:
+            shape.circle.center = vec2_add(start, shape.circle.center);
+            break;
+        case TRIANGLE:
+            shape.triangle.v1 = vec2_add(start, shape.triangle.v1);
+            shape.triangle.v2 = vec2_add(start, shape.triangle.v2);
+            shape.triangle.v3 = vec2_add(start, shape.triangle.v3);
+            break;
+        case RECT:
+            shape.rect.pos = vec2_add(start, shape.rect.pos);
+            break;
+        case POLY: 
+            assert("not implemented");
+            break;
+    }
+    return shape;
+}
+
 Vec2 shape_center(Shape s1, Shape s2);
 
 // TODO: delete me, just for testing purposes
