@@ -100,8 +100,7 @@ static const Vec2 vec2zero = {0.0f, 0.0f};
 
 static inline Vec2 vec2(const double x, const double y)
 {
-    Vec2 vec = {x, y};
-    return vec;
+    return (Vec2){x, y};
 }
 
 static inline Vec2 vec2_add(const Vec2 a, const Vec2 b)
@@ -495,14 +494,15 @@ void body_update(Body *body, const double dt)
 {
     // Mutiply by delta time
     Vec2 acc = vec2_mult(body->acc, dt);
+    Vec2 vel = vec2_mult(body->vel, dt);
 
     body->vel = vec2_add(body->vel, acc);
+    body->pos = vec2_add(body->pos, vel);
+
+    body->acc = vec2zero;
     if (body->max_speed >= 0) {
         body->vel = vec2_limit(body->vel, body->max_speed);
     }
-
-    body->pos = vec2_add(body->pos, body->vel);
-    body->acc = vec2zero;
 }
 
 Vec2 body_momentum(Body *body)
@@ -762,9 +762,9 @@ void collider_free(Shape *collier)
     arrfree(collier);
 }
 
-void collider_add_shape(Shape *collider, Shape shape)
+void collider_add_shape(Shape **collider, Shape shape)
 {
-    arrput(collider, shape);
+    arrput(*collider, shape);
 }
 
 bool collider_detect_collisions(Shape *c1, Shape *c2)
