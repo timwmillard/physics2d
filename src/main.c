@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <raylib.h>
+#include <time.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -15,7 +17,10 @@ int main(void)
     const int screenWidth = 800;
     const int screenHeight = 450;
 
+    srand(time(NULL));
+
     InitWindow(screenWidth, screenHeight, "Physics 2D Simulation");
+    SetWindowPosition(100, 100);
 
     // Main game loop
 #if defined(PLATFORM_WEB)

@@ -38,8 +38,6 @@ bool start = false;
 
 void Init()
 {
-    srand(time(NULL));
-
     Vec2 r = vec2_random();
     debug_vec2(r);
 }
