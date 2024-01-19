@@ -774,7 +774,7 @@ bool collider_detect_collisions(Vec2 p1, Shape *c1, Vec2 p2, Shape *c2)
     for (int i=0; i<n1; i++) {
         for (int j=0; j<n2; j++) {
             Shape s1 = shape_offset(p1, c1[i]);
-            Shape s2 = shape_offset(p2, c2[i]);
+            Shape s2 = shape_offset(p2, c2[j]);
             if (shape_collide(s1, s2))
                 return true;
         }
