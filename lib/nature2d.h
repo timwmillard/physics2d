@@ -17,7 +17,6 @@ typedef struct Object {
 
 } Object;
 
-
 void object_free(Object *obj)
 {
     collider_free(obj->colliers);
@@ -26,6 +25,11 @@ void object_free(Object *obj)
 void object_update(Object *obj, double dt)
 {
     body_update(&obj->body, dt);
+}
+
+bool object_detect_collition(Object *o1, Object *o2)
+{
+    return collider_detect_collisions(o1->body.pos, o1->colliers,o2->body.pos, o2->colliers);
 }
 
 void draw_shape(Vec2 start, Shape shape, Color color);

@@ -767,13 +767,15 @@ void collider_add_shape(Shape **collider, Shape shape)
     arrput(*collider, shape);
 }
 
-bool collider_detect_collisions(Shape *c1, Shape *c2)
+bool collider_detect_collisions(Vec2 p1, Shape *c1, Vec2 p2, Shape *c2)
 {
     int n1 = arrlen(c1);
     int n2 = arrlen(c2);
     for (int i=0; i<n1; i++) {
         for (int j=0; j<n2; j++) {
-            if (shape_collide(c1[i], c2[j]))
+            Shape s1 = shape_offset(p1, c1[i]);
+            Shape s2 = shape_offset(p2, c2[i]);
+            if (shape_collide(s1, s2))
                 return true;
         }
     }
