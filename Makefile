@@ -27,7 +27,7 @@ FRAMEWORKS = -framework IOKit -framework Cocoa
 all: $(TARGET)
 
 # Script
-script.o: src/script.c lib/physics2d.h
+script.o: src/script.c lib/physics2d.h lib/nature2d.h
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 script : main.o script.o

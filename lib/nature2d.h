@@ -34,12 +34,14 @@ bool object_detect_collition(Object *o1, Object *o2)
 
 void draw_shape(Vec2 start, Shape shape, Color color);
 
+
+#define SHADOW_COLOR (Color){ 100, 100, 100, 100 }
+
 // Default object_draw
 void object_draw(Object *obj)
 {
-    Color gray = { 130, 130, 130, 200 };
     for (int i=0; i<arrlen(obj->colliers); i++) {
-        draw_shape(obj->body.pos, obj->colliers[i], gray);
+        draw_shape(obj->body.pos, obj->colliers[i], SHADOW_COLOR);
     }
 }
 
