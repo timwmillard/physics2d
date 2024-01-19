@@ -26,14 +26,6 @@ FRAMEWORKS = -framework IOKit -framework Cocoa
 
 all: $(TARGET)
 
-# Script
-script.o: src/script.c lib/physics2d.h lib/nature2d.h
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
-
-script : main.o script.o
-	$(LD) -o script $^ $(FRAMEWORKS) $(LDFLAGS)
-	./script
-	rm script
 
 # Main Siumulation
 $(TARGET) : main.o draw.o
@@ -48,6 +40,15 @@ main.o: src/main.c
 release: $(TARGET)
 	cp $(TARGET) release/$(TARGET).app/Contents/MacOS/
 
+
+# Script
+script.o: src/script.c lib/physics2d.h lib/nature2d.h
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+
+script : main.o script.o
+	$(LD) -o script $^ $(FRAMEWORKS) $(LDFLAGS)
+	./script
+	rm script
 
 #emcc -o game.html game.c -Os -Wall ./path-to/libraylib.a -I. -Ipath-to-raylib-h -L. -Lpath-to-libraylib-a -s USE_GLFW=3 --shell-file path-to/shell.html -DPLATFORM_WEB
 web: build/web/libraylib.a src/main.c web/index.html

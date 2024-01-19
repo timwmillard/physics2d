@@ -218,9 +218,9 @@ static inline double vec2_lerp(const Vec2 a, const Vec2 b, const double amp);
 
 */
 
-static inline void debug_vec2(Vec2 v)
+static inline void debug_vec2(char* name, Vec2 v)
 {
-    printf("vec2: x=%lf, y=%lf\n", v.x, v.y);
+    printf("%s: x=%lf, y=%lf\n", name, v.x, v.y);
 }
 
 
@@ -428,6 +428,17 @@ static inline void shape_free(Shape s)
     if (s.type == POLY) poly_free(s.poly);
 }
 
+
+// Collision
+typedef struct Collision {
+    bool hit;
+    Shape shapes[2]; 
+    Vec2 dir;
+} Collision;
+
+static const Collision collision_miss = {0};
+
+
 #endif // End PHYSICS2D_H
 
 
@@ -609,29 +620,35 @@ double shape_area(Shape s) {
  * 
  */
 
-bool point_collide(Point p1, Point p2)
+Collision point_collide(Point p1, Point p2)
 {
     int p1x = p1.x;
     int p1y = p1.y;
     int p2x = p2.x;
     int p2y = p2.y;
-    return p1x == p2x && p1y == p2y;
+    return (Collision) {
+        .hit = p1x == p2x && p1y == p2y,
+        .shapes = {
+            { .type = POINT, .point = p1, },
+            { .type = POINT, .point = p2, },
+        },
+    };
 }
 
-bool point_collide_line(Point p, Line l) { return false; }
-bool point_collide_circle(Point p, Circle c) { return false; }
-bool point_collide_triangle(Point p, Triangle t) { return false; }
-bool point_collide_rect(Point p, Rect r) { return false; }
-bool point_collide_poly(Point p, Poly poly) { return false; }
+Collision point_collide_line(Point p, Line l) { return collision_miss; }
+Collision point_collide_circle(Point p, Circle c) { return collision_miss; }
+Collision point_collide_triangle(Point p, Triangle t) { return collision_miss; }
+Collision point_collide_rect(Point p, Rect r) { return collision_miss; }
+Collision point_collide_poly(Point p, Poly poly) { return collision_miss; }
 
-bool line_collide(Line l1, Line l2) { return false; }
-bool line_collide_point(Line l, Point p) { return false; }
-bool line_collide_circle(Line l, Circle c) { return false; }
-bool line_collide_triangle(Line l, Triangle t) { return false; }
-bool line_collide_rect(Line l, Rect r) { return false; }
-bool line_collide_poly(Line l, Poly poly) { return false; }
+Collision line_collide(Line l1, Line l2) { return collision_miss; }
+Collision line_collide_point(Line l, Point p) { return collision_miss; }
+Collision line_collide_circle(Line l, Circle c) { return collision_miss; }
+Collision line_collide_triangle(Line l, Triangle t) { return collision_miss; }
+Collision line_collide_rect(Line l, Rect r) { return collision_miss; }
+Collision line_collide_poly(Line l, Poly poly) { return collision_miss; }
 
-bool circle_collide(Circle c1, Circle c2)
+Collision circle_collide(Circle c1, Circle c2)
 { 
   // get distance between the circle's centers
   // use the Pythagorean Theorem to compute the distance
@@ -641,40 +658,44 @@ bool circle_collide(Circle c1, Circle c2)
 
   // if the distance is less than the sum of the circle's
   // radii, the circles are touching!
-  if (distance <= c1.radius+c2.radius) {
-    return true;
-  }
-  return false;
+  return (Collision) {
+    .hit = distance <= c1.radius+c2.radius,
+    .shapes = {
+        { .type = CIRCLE, .circle = c1, },
+        { .type = CIRCLE, .circle = c2, },
+    },
+    .dir = vec2_add(c1.center, c2.center),
+  };
 }
 
-bool circle_collide_line(Circle c, Line l) { return false; }
-bool circle_collide_point(Circle c, Point p) { return false; }
-bool circle_collide_triangle(Circle p, Triangle t) { return false; }
-bool circle_collide_rect(Circle p, Rect r) { return false; }
-bool circle_collide_poly(Circle p, Poly poly) { return false; }
+Collision circle_collide_line(Circle c, Line l) { return collision_miss; }
+Collision circle_collide_point(Circle c, Point p) { return collision_miss; }
+Collision circle_collide_triangle(Circle p, Triangle t) { return collision_miss; }
+Collision circle_collide_rect(Circle p, Rect r) { return collision_miss; }
+Collision circle_collide_poly(Circle p, Poly poly) { return collision_miss; }
 
-bool rect_collide(Rect r1, Rect r2) { return false; }
-bool rect_collide_point(Rect r, Point p) { return false; }
-bool rect_collide_line(Rect r, Line l) { return false; }
-bool rect_collide_circle(Rect r, Circle c) { return false; }
-bool rect_collide_triangle(Rect r, Triangle t) { return false; }
-bool rect_collide_poly(Rect r, Poly poly) { return false; }
+Collision rect_collide(Rect r1, Rect r2) { return collision_miss; }
+Collision rect_collide_point(Rect r, Point p) { return collision_miss; }
+Collision rect_collide_line(Rect r, Line l) { return collision_miss; }
+Collision rect_collide_circle(Rect r, Circle c) { return collision_miss; }
+Collision rect_collide_triangle(Rect r, Triangle t) { return collision_miss; }
+Collision rect_collide_poly(Rect r, Poly poly) { return collision_miss; }
 
-bool triangle_collide(Triangle t1, Triangle t2) { return false; }
-bool triangle_collide_point(Triangle t, Point p) { return false; }
-bool triangle_collide_line(Triangle t, Line l) { return false; }
-bool triangle_collide_circle(Triangle t, Circle c) { return false; }
-bool triangle_collide_rect(Triangle t, Rect r) { return false; }
-bool triangle_collide_poly(Triangle t, Poly poly) { return false; }
+Collision triangle_collide(Triangle t1, Triangle t2) { return collision_miss; }
+Collision triangle_collide_point(Triangle t, Point p) { return collision_miss; }
+Collision triangle_collide_line(Triangle t, Line l) { return collision_miss; }
+Collision triangle_collide_circle(Triangle t, Circle c) { return collision_miss; }
+Collision triangle_collide_rect(Triangle t, Rect r) { return collision_miss; }
+Collision triangle_collide_poly(Triangle t, Poly poly) { return collision_miss; }
 
-bool poly_collide(Poly p1, Poly p2) { return false; }
-bool poly_collide_point(Poly poly, Point point) { return false; }
-bool poly_collide_line(Poly p, Line l) { return false; }
-bool poly_collide_circle(Poly p, Circle c) { return false; }
-bool poly_collide_rect(Poly p, Rect r) { return false; }
-bool poly_collide_triangle(Poly p, Triangle poly) { return false; }
+Collision poly_collide(Poly p1, Poly p2) { return collision_miss; }
+Collision poly_collide_point(Poly poly, Point point) { return collision_miss; }
+Collision poly_collide_line(Poly p, Line l) { return collision_miss; }
+Collision poly_collide_circle(Poly p, Circle c) { return collision_miss; }
+Collision poly_collide_rect(Poly p, Rect r) { return collision_miss; }
+Collision poly_collide_triangle(Poly p, Triangle poly) { return collision_miss; }
 
-bool shape_collide(Shape s1, Shape s2)
+Collision shape_collide(Shape s1, Shape s2)
 {
     if (s1.type == POINT && s2.type == POINT) return point_collide(s1.point, s2.point);
     if (s1.type == POINT && s2.type == LINE) return point_collide_line(s1.point, s2.line);
@@ -711,7 +732,7 @@ bool shape_collide(Shape s1, Shape s2)
     if (s1.type == TRIANGLE && s2.type == RECT) return triangle_collide(s1.triangle, s2.triangle);
     if (s1.type == TRIANGLE && s2.type == POLY) return triangle_collide_poly(s1.triangle, s2.poly);
 
-    return false;
+    return collision_miss;
 }
 
 Shape shape_offset(Vec2 start, Shape shape)
@@ -767,7 +788,7 @@ void collider_add_shape(Shape **collider, Shape shape)
     arrput(*collider, shape);
 }
 
-bool collider_detect_collisions(Vec2 p1, Shape *c1, Vec2 p2, Shape *c2)
+Collision collider_detect_collisions(Vec2 p1, Shape *c1, Vec2 p2, Shape *c2)
 {
     int n1 = arrlen(c1);
     int n2 = arrlen(c2);
@@ -775,11 +796,13 @@ bool collider_detect_collisions(Vec2 p1, Shape *c1, Vec2 p2, Shape *c2)
         for (int j=0; j<n2; j++) {
             Shape s1 = shape_offset(p1, c1[i]);
             Shape s2 = shape_offset(p2, c2[j]);
-            if (shape_collide(s1, s2))
-                return true;
+            Collision collision = shape_collide(s1, s2);
+            if (collision.hit) {
+                return collision;
+            }
         }
     }
-    return false;
+    return (Collision) { .hit = false };
 }
 
 #endif // End PHYSICS2D_IMPLEMENTATION

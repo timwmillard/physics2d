@@ -38,7 +38,7 @@ bool start = false;
 void Init(int width, int height)
 {
     Vec2 r = vec2_random();
-    debug_vec2(r);
+    debug_vec2("vec2_random", r);
 }
 
 void ProcessEvents()

@@ -27,7 +27,7 @@ void object_update(Object *obj, double dt)
     body_update(&obj->body, dt);
 }
 
-bool object_detect_collition(Object *o1, Object *o2)
+Collision object_detect_collision(Object *o1, Object *o2)
 {
     return collider_detect_collisions(o1->body.pos, o1->colliers,o2->body.pos, o2->colliers);
 }
