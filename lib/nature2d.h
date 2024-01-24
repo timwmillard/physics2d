@@ -165,6 +165,7 @@ void draw_shape(Vec2 start, Shape shape, Color color)
         case LINE: draw_line(s.line, color); break;
         case CIRCLE: draw_circle(s.circle, color); break;
         case TRIANGLE: break;
+        case QUAD: break; // TODO
         case RECT: draw_rect(s.rect, color); break;
         case POLY: break;
     }

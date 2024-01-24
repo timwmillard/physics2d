@@ -67,6 +67,8 @@ void Update(float dt)
 
         printf("collision detection\n");
         debug_vec2("colllision.dir", collision.dir);
+        Vec2 move = vec2_set_mag(collision.dir, 30);
+        ball.body.pos = vec2_add(ball.body.pos, move);
 
         /* ball.body.vel = vec2_mult(ball.body.vel, -1); */
     }
@@ -74,10 +76,10 @@ void Update(float dt)
     /* Vec2 wind = vec2(0, 500); */
     /* body_apply_force(&ball.body, wind); */
 
-    Vec2 force = vec2_set_mag(controller_direction, 20000);
+    Vec2 force = vec2_set_mag(controller_direction, 10000);
     body_apply_force(&ball.body, force);
 
-    body_apply_gravity(&ball.body, vec2(0, 350));
+    /* body_apply_gravity(&ball.body, vec2(0, 350)); */
 
     object_update(&ball, dt);
     object_update(&ball2, dt);

@@ -43,6 +43,16 @@ This include this in one C files:
 #include <math.h>
 #include <stdarg.h>
 
+static inline double normalize(double value, double start, double end)
+{
+    return (value - start) / (end - start);
+}
+
+static inline double lerp(double start, double end, double amount)
+{
+    return start + amount * (end - start);
+}
+
 static inline double map(const double value,
         const double start1, const double stop1,
         const double start2, const double stop2)
@@ -287,6 +297,13 @@ typedef struct Triangle {
     Vec2 v3;
 } Triangle;
 
+// Quadrilateral
+typedef struct Quad {
+    Vec2 v1;
+    Vec2 v2;
+    Vec2 v3;
+    Vec2 v4;
+} Quad;
 
 // Polygon
 typedef struct Poly {
@@ -310,6 +327,7 @@ typedef enum ShapeType {
     CIRCLE,
     RECT,
     TRIANGLE,
+    QUAD,
     POLY,
 } ShapeType;
 
@@ -322,6 +340,7 @@ typedef struct Shape {
         Circle circle;
         Rect rect;
         Triangle triangle;
+        Quad quad;
         Poly poly;
     };
 } Shape;
@@ -392,6 +411,29 @@ static inline Shape trianglev(Vec2 v1, Vec2 v2, Vec2 v3)
 static inline Shape triangle(double x1, double y1, double x2, double y2, double x3, double y3)
 {
     return trianglev(vec2(x1,y1), vec2(x2,y2), vec2(x3,y3));
+}
+
+static inline Shape quadv(Vec2 v1, Vec2 v2, Vec2 v3, Vec2 v4)
+{
+    return (Shape){
+        .type = QUAD,
+        .quad = {v1, v2, v3, v4},
+    };
+}
+
+static inline Shape quad(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)
+{
+    return quadv(vec2(x1,y1), vec2(x2,y2), vec2(x3,y3), vec2(x4,y4));
+}
+
+static inline Quad rect_to_quad(Rect r)
+{
+    return (Quad){
+        .v1 = r.pos,
+        .v2 = vec2(r.pos.x + r.width, r.pos.y),
+        .v3 = vec2(r.pos.x + r.width, r.pos.y + r.height),
+        .v4 = vec2(r.pos.x , r.pos.y + r.height),
+    };
 }
 
 static inline Shape poly(int n, Vec2 v1, ...)
@@ -505,9 +547,9 @@ void body_update(Body *body, const double dt)
 {
     // Mutiply by delta time
     Vec2 acc = vec2_mult(body->acc, dt);
-    Vec2 vel = vec2_mult(body->vel, dt);
-
     body->vel = vec2_add(body->vel, acc);
+
+    Vec2 vel = vec2_mult(body->vel, dt);
     body->pos = vec2_add(body->pos, vel);
 
     body->acc = vec2zero;
@@ -598,6 +640,12 @@ double rect_area(Rect r)
     return r.width * r.height;
 }
 
+double quad_area(Quad q)
+{
+    return -1; // TODO
+}
+
+
 double poly_area(Poly p)
 {
     return -1; // TODO
@@ -609,6 +657,7 @@ double shape_area(Shape s) {
         case LINE: return line_area(s.line); break;
         case CIRCLE: return circle_area(s.circle); break;
         case TRIANGLE: return triangle_area(s.triangle); break;
+        case QUAD: return quad_area(s.quad); break;
         case RECT: return rect_area(s.rect); break;
         case POLY: return poly_area(s.poly); break;
     }
@@ -664,7 +713,7 @@ Collision circle_collide(Circle c1, Circle c2)
         { .type = CIRCLE, .circle = c1, },
         { .type = CIRCLE, .circle = c2, },
     },
-    .dir = vec2_add(c1.center, c2.center),
+    /* .dir = vec2_add(c1.center, c2.center), */
   };
 }
 
@@ -749,13 +798,16 @@ Shape shape_offset(Vec2 start, Shape shape)
         case CIRCLE:
             shape.circle.center = vec2_add(start, shape.circle.center);
             break;
+        case RECT:
+            shape.rect.pos = vec2_add(start, shape.rect.pos);
+            break;
         case TRIANGLE:
             shape.triangle.v1 = vec2_add(start, shape.triangle.v1);
             shape.triangle.v2 = vec2_add(start, shape.triangle.v2);
             shape.triangle.v3 = vec2_add(start, shape.triangle.v3);
             break;
-        case RECT:
-            shape.rect.pos = vec2_add(start, shape.rect.pos);
+        case QUAD:
+            shape.quad.v1 = vec2_add(start, shape.quad.v1);
             break;
         case POLY: 
             assert("not implemented");
@@ -788,16 +840,17 @@ void collider_add_shape(Shape **collider, Shape shape)
     arrput(*collider, shape);
 }
 
-Collision collider_detect_collisions(Vec2 p1, Shape *c1, Vec2 p2, Shape *c2)
+Collision collider_detect_collisions(Vec2 pos1, Shape *shapes1, Vec2 pos2, Shape *shapes2)
 {
-    int n1 = arrlen(c1);
-    int n2 = arrlen(c2);
+    int n1 = arrlen(shapes1);
+    int n2 = arrlen(shapes2);
     for (int i=0; i<n1; i++) {
         for (int j=0; j<n2; j++) {
-            Shape s1 = shape_offset(p1, c1[i]);
-            Shape s2 = shape_offset(p2, c2[j]);
+            Shape s1 = shape_offset(pos1, shapes1[i]);
+            Shape s2 = shape_offset(pos2, shapes2[j]);
             Collision collision = shape_collide(s1, s2);
             if (collision.hit) {
+                collision.dir = vec2_normalize(vec2_sub(pos1, pos2));
                 return collision;
             }
         }

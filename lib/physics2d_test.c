@@ -36,6 +36,30 @@ double roundp(double var, int percision)
     return (double) value / multi; 
 }
 
+void test_lerp()
+{
+    test_start("lerp");
+
+    typedef struct {
+        double start;
+        double end;
+        double amount;
+        double want;
+    } test;
+
+    test tests[] =  {
+        {.start=2.0, .end=4.0, .amount=0.5, .want=3.0},
+        {.start=2.0, .end=8.0, .amount=1.5, .want=11.0},
+    };
+
+    for (int i=0; i < sizeof(tests)/sizeof(test); i++) {
+        test t = tests[i];
+        double got = lerp(t.start, t.end, t.amount);
+        assert(roundp(got, 2) == roundp(t.want,2));
+    }
+    test_passed();
+}
+
 void test_max()
 {
     test_start("max");
@@ -162,16 +186,43 @@ void test_vec2_sub()
     test_passed();
 }
 
+void test_rect_to_quad()
+{
+    test_start("rect_to_quad");
+
+    typedef struct {
+        Rect rect;
+        Quad want;
+    } test;
+
+    test tests[] =  {
+        {.rect={0,0, 5, 5}, .want={0,0, -5,0, -5,-5, -5,0}},
+    };
+
+    for (int i=0; i < sizeof(tests)/sizeof(test); i++) {
+        test t = tests[i];
+        Quad got = rect_to_quad(t.rect);
+        assert(vec2_equalp(got.v1, t.want.v1, 2));
+        assert(vec2_equalp(got.v2, t.want.v2, 2));
+        assert(vec2_equalp(got.v3, t.want.v3, 2));
+        assert(vec2_equalp(got.v4, t.want.v4, 2));
+    }
+    test_passed();
+}
+
+
 
 int main()
 {
     all_test_start();
-
+    
+    test_lerp();
     test_max();
     test_min();
     test_map();
     test_vec2_add();
     test_vec2_sub();
+    /* test_rect_to_quad(); */
 
     all_test_passed();
 
