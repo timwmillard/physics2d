@@ -14,17 +14,17 @@ Vec2 controller_direction;
 void Init(int width, int height)
 {
     body_init(&boundary.body,  vec2zero, 0);
-    collider_add_shape(&boundary.colliers, rect(10, 10, width-20, height-20));
+    collider_add_shape(boundary.collier, rect(10, 10, width-20, height-20));
 
     body_init(&ball.body,  vec2(100, 100), 50);
     /* ball.body.max_speed = 150; */
-    collider_add_shape(&ball.colliers, circle(0, 0, 40));
+    collider_add_shape(ball.collier, circle(0, 0, 40));
     /* collider_add_shape(&ball.colliers, circle(30, 30, 30)); */
     /* collider_add_shape(&ball.colliers, circle(0, 30, 30)); */
     /* collider_add_shape(&ball.colliers, circle(-30, 0, 30)); */
 
     body_init(&ball2.body, vec2(200, 300), 50);
-    collider_add_shape(&ball2.colliers, circle(0, 0, 30));
+    collider_add_shape(ball2.collier, circle(0, 0, 30));
 }
 
 void ProcessEvents(void)
@@ -62,13 +62,14 @@ void Update(float dt)
     if (collision.hit) {
         /* Vec2 dir = vec2_add(collision[0], ball.body.pos); */
         /* dir = vec2_normalize(dir); */
-        double speed = vec2_mag(ball.body.vel);
-        ball.body.vel = vec2_set_mag(collision.dir, -speed);
+        /* double speed = vec2_mag(ball.body.vel); */
+        /* ball.body.vel = vec2_set_mag(collision.dir, -speed); */
+        ball.body.vel = vec2_mult(ball.body.vel, -1);
 
         printf("collision detection\n");
         debug_vec2("colllision.dir", collision.dir);
-        Vec2 move = vec2_set_mag(collision.dir, 30);
-        ball.body.pos = vec2_add(ball.body.pos, move);
+        /* Vec2 move = vec2_set_mag(collision.dir, 30); */
+        /* ball.body.pos = vec2_add(ball.body.pos, move); */
 
         /* ball.body.vel = vec2_mult(ball.body.vel, -1); */
     }

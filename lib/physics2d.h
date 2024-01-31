@@ -1,4 +1,5 @@
 /*
+--------------------------------------------------------------------------------
 MIT License
 Copyright (c) 2024 Tim Millard
 
@@ -18,7 +19,7 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+--------------------------------------------------------------------------------
 
 physics2d.h is a simple physics 2D library for programming games and
 simulations.
@@ -480,6 +481,12 @@ typedef struct Collision {
 
 static const Collision collision_miss = {0};
 
+// Collier is a collection of shapes
+typedef Shape *Collider;
+
+#define collider_add_shape(c, shape) arrput(c, shape)
+#define collider_free(c) arrfree(c)
+
 
 #endif // End PHYSICS2D_H
 
@@ -824,28 +831,19 @@ static inline double kinamatic(double acc, double vel, double pos, double t)
     return 0.5f * acc * t * t * vel * t + pos;
 }
 
-
-Shape *collider()
+Collider collider(Shape shapes[], int num_shapes)
 {
-    return NULL;
+    Collider collider = NULL;
+    for (int i = 0; i < num_shapes; i++) {
+        arrput(collider, shapes[i]);
+    }
+    return collider;
 }
 
-void collider_free(Shape *collier)
+Collision collider_detect_collisions(Vec2 pos1, Collider shapes1, Vec2 pos2, Collider shapes2)
 {
-    arrfree(collier);
-}
-
-void collider_add_shape(Shape **collider, Shape shape)
-{
-    arrput(*collider, shape);
-}
-
-Collision collider_detect_collisions(Vec2 pos1, Shape *shapes1, Vec2 pos2, Shape *shapes2)
-{
-    int n1 = arrlen(shapes1);
-    int n2 = arrlen(shapes2);
-    for (int i=0; i<n1; i++) {
-        for (int j=0; j<n2; j++) {
+    for (int i=0; i<arrlen(shapes1); i++) {
+        for (int j=0; j<arrlen(shapes2); j++) {
             Shape s1 = shape_offset(pos1, shapes1[i]);
             Shape s2 = shape_offset(pos2, shapes2[j]);
             Collision collision = shape_collide(s1, s2);

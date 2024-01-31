@@ -70,8 +70,8 @@ web: build/web/libraylib.a src/main.c web/index.html
 
 raylib:
 	cd lib/raylib-5.0/src && \
-	make clean && \
-	make -B && \
+	$(MAKE) --no-print-directory clean && \
+	$(MAKE) --no-print-directory && \
 	cp libraylib.a ../../../build/macos/
 
 raylib-web:

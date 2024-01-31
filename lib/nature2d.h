@@ -7,7 +7,7 @@ typedef struct Object {
 
     Body body;
 
-    Shape *colliers;
+    Collider collier;
 
     void (*init)(struct Object *obj);
 
@@ -19,7 +19,7 @@ typedef struct Object {
 
 void object_free(Object *obj)
 {
-    collider_free(obj->colliers);
+    collider_free(obj->collier);
 }
 
 void object_update(Object *obj, double dt)
@@ -29,7 +29,7 @@ void object_update(Object *obj, double dt)
 
 Collision object_detect_collision(Object *o1, Object *o2)
 {
-    return collider_detect_collisions(o1->body.pos, o1->colliers,o2->body.pos, o2->colliers);
+    return collider_detect_collisions(o1->body.pos, o1->collier,o2->body.pos, o2->collier);
 }
 
 void draw_shape(Vec2 start, Shape shape, Color color);
@@ -40,8 +40,8 @@ void draw_shape(Vec2 start, Shape shape, Color color);
 // Default object_draw
 void object_draw(Object *obj)
 {
-    for (int i=0; i<arrlen(obj->colliers); i++) {
-        draw_shape(obj->body.pos, obj->colliers[i], SHADOW_COLOR);
+    for (int i=0; i<arrlen(obj->collier); i++) {
+        draw_shape(obj->body.pos, obj->collier[i], SHADOW_COLOR);
     }
 }
 
